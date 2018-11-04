@@ -1,12 +1,12 @@
 module Expressions where
   import Data.List
 
-  data Binop = Impl | Conj | Disj | Sum | Mul | Equality
+  data Binop = Impl | Conj | Disj | Add | Mul | Equality
   instance Show Binop where
     show Impl = "->"
     show Conj = "&"
     show Disj = "|"
-    show Sum = "+"
+    show Add = "+"
     show Mul = "*"
     show Equality = "="
 
