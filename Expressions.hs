@@ -2,6 +2,7 @@ module Expressions where
   import Data.List
 
   data Binop = Impl | Conj | Disj | Add | Mul | Equality
+    deriving (Eq)
   instance Show Binop where
     show Impl = "->"
     show Conj = "&"
@@ -11,6 +12,7 @@ module Expressions where
     show Equality = "="
 
   data Quantifier = Any | Exists
+    deriving (Eq)
   instance Show Quantifier where
     show Any = "@"
     show Exists = "?"
@@ -21,6 +23,7 @@ module Expressions where
                     | Function String [Expression]
                     | Quant Quantifier Expression Expression
                     | Next Expression
+                    deriving (Eq)
 
   instance Show Expression where
     show (Quant q first second) = "(" ++ show q ++ show first ++ show second ++ ")"
