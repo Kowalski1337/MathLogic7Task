@@ -1,13 +1,16 @@
 module Parser where
   import Text.Megaparsec.Expr
+  import Text.Megaparsec
+  import Text.Megaparsec.Char
   import qualified Text.Megaparsec.Char.Lexer as L
   import Expressions
   import Data.Void
+  import Control.Monad
 
   type Parser = Parsec Void String
 
   sc :: Parser ()
-  sc = L.space space1 empty empty
+  sc = L.space empty empty empty
 
   symbol :: String -> Parser ()
   symbol = void . L.symbol sc
@@ -18,10 +21,8 @@ module Parser where
   identifier :: Parser String
   identifier = many alphaNumChar
 
-  operators :: Parser Expression
-
   parserBinary :: Parser Expression
-  parserBinary = makeBinaryParser binaryTerm binaryOperators
+  parserBinary = makeExprParser binaryTerm binaryOperators
 
   binaryOperators :: [[Operator Parser Expression]]
   binaryOperators =
@@ -35,7 +36,7 @@ module Parser where
   parserFunc = do
     name <- identifier
     args <- parserArgs <|> return []
-    return Function name args
+    return $ Function name args
 
   parserArgs :: Parser [Expression]
   parserArgs = do
