@@ -3,6 +3,7 @@ module Expressions where
 
   data Binop = Impl | Conj | Disj | Add | Mul | Equality
     deriving (Eq)
+
   instance Show Binop where
     show Impl = "->"
     show Conj = "&"
@@ -28,7 +29,7 @@ module Expressions where
   instance Show Expression where
     show (Quant q first second) = "(" ++ show q ++ show first ++ show second ++ ")"
     show (Binary op first second) = "(" ++ show first ++ show op ++ show second ++ ")"
-    show (Negation expr) = "!" ++ show expr ++
+    show (Negation expr) = "!" ++ show expr
     show (Next expr) = show expr ++ "\'"
     show (Function f args) = f ++ "(" ++ (intercalate ", " (map show args)) ++ ")"
     show (Predicate f args) = f ++ "(" ++ (intercalate ", " (map show args)) ++ ")"

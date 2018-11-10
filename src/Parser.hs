@@ -1,10 +1,24 @@
 module Parser where
-  import Text.Megaparsec
+  import Text.Megaparsec.Expr
   import qualified Text.Megaparsec.Char.Lexer as L
   import Expressions
   import Data.Void
 
   type Parser = Parsec Void String
+
+  sc :: Parser ()
+  sc = L.space space1 empty empty
+
+  symbol :: String -> Parser ()
+  symbol = void . L.symbol sc
+
+  parens :: Parser a -> Parser a
+  parens = between (symbol "(") (symbol ")")
+
+  identifier :: Parser String
+  identifier = many alphaNumChar
+
+  operators :: Parser Expression
 
   parserBinary :: Parser Expression
   parserBinary = makeBinaryParser binaryTerm binaryOperators
@@ -28,7 +42,7 @@ module Parser where
     args <- many parserArg
     return args
 
-  parserArgs :: Parser Expression
+  parserArg :: Parser Expression
   parserArg = do
     arg <- parserFunc
     symbol "," <|> symbol ""
