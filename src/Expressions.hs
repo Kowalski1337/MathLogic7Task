@@ -19,8 +19,8 @@ module Expressions where
 
   data Expression = Binary Binop Expression Expression
                     | Negation Expression
-                    | Variable String
                     | Function String [Expression]
+                    | Predicate String [Expression]
                     | Quant Quantifier Expression Expression
                     | Next Expression
                     deriving (Eq)
@@ -28,7 +28,7 @@ module Expressions where
   instance Show Expression where
     show (Quant q first second) = "(" ++ show q ++ show first ++ show second ++ ")"
     show (Binary op first second) = "(" ++ show first ++ show op ++ show second ++ ")"
-    show (Negation expr) = "!" ++ show expr ++ ""
-    show (Variable s) = s
+    show (Negation expr) = "!" ++ show expr ++
     show (Next expr) = show expr ++ "\'"
     show (Function f args) = f ++ "(" ++ (intercalate ", " (map show args)) ++ ")"
+    show (Predicate f args) = f ++ "(" ++ (intercalate ", " (map show args)) ++ ")"
