@@ -1,5 +1,5 @@
 module Axioms where
-  import Expressions
+  import Expression
   zero = Variable "0"
 
   log1 = Binary Impl (Variable "A") (Binary Impl (Variable "B") (Variable "A"))

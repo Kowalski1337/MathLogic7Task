@@ -3,12 +3,14 @@ module Parser where
 import           Expression
 
 import           Data.Void
-import           Control.Monad
+import           Control.Monad (void)
+import           Control.Monad.Combinators.Expr
 
 import           Text.Megaparsec
-import           Text.Megaparsec.Expr
 import           Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
+
+
 
 
 type Parser = Parsec Void String
@@ -103,7 +105,7 @@ parserQuant = parserExist <|> parserAny
 parserFile :: Parser (([Expression], Expression), [Expression])
 parserFile = do
     headerList <- parserArgs
-    symbol "|-"
+    symbol "#"
     headerExpr <- parserExpr
     symbol "\n"
     proof <- many parserExprLine

@@ -13,7 +13,7 @@ main :: IO ()
 main = do
     -- path <- getLine
     -- file <- readFile path
-    case runParser parserExpr "" (replaceTurn file) of
+    case runParser parserFile "" (replaceTurn file) of
         Left parseErr -> putStr $ parseErrorPretty parseErr
         Right _       -> putStrLn "OK"
   where
