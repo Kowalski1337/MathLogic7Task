@@ -1,35 +1,45 @@
-module Expressions where
-  import Data.List
+module Expression where
 
-  data Binop = Impl | Conj | Disj | Add | Mul | Equality
-    deriving (Eq)
+import Data.List
 
-  instance Show Binop where
-    show Impl = "->"
-    show Conj = "&"
-    show Disj = "|"
-    show Add = "+"
-    show Mul = "*"
-    show Equality = "="
 
-  data Quantifier = Any | Exists
-    deriving (Eq)
-  instance Show Quantifier where
-    show Any = "@"
-    show Exists = "?"
+data BinaryType = Impl | And | Or | Add | Mul | Equal
+    deriving Eq
 
-  data Expression = Binary Binop Expression Expression
-                    | Negation Expression
-                    | Function String [Expression]
-                    | Predicate String [Expression]
-                    | Quant Quantifier Expression Expression
-                    | Next Expression
-                    deriving (Eq)
+instance Show BinaryType where
+    show Impl  = "->"
+    show And   = "&"
+    show Or    = "|"
+    show Add   = "+"
+    show Mul   = "*"
+    show Equal = "="
 
-  instance Show Expression where
-    show (Quant q first second) = "(" ++ show q ++ show first ++ show second ++ ")"
-    show (Binary op first second) = "(" ++ show first ++ show op ++ show second ++ ")"
-    show (Negation expr) = "!" ++ show expr
-    show (Next expr) = show expr ++ "\'"
-    show (Function f args) = f ++ "(" ++ (intercalate ", " (map show args)) ++ ")"
-    show (Predicate f args) = f ++ "(" ++ (intercalate ", " (map show args)) ++ ")"
+
+data UnaryType = Next | Neg
+    deriving Eq
+
+instance Show UnaryType where
+    show Next = "\'"
+    show Neg  = "!"
+
+
+data QuantType = Any | Exist
+    deriving Eq
+
+instance Show QuantType where
+    show Any   = "@"
+    show Exist = "?"
+
+
+data Expression = Named String [Expression]
+                | Unary UnaryType Expression
+                | Binary BinaryType Expression Expression
+                | Quant QuantType String Expression
+    deriving Eq
+
+instance Show Expression where
+    show (Named name [])           = name
+    show (Named name args)         = name ++ "(" ++ (intercalate "," (map show args)) ++ ")"
+    show (Unary unT expr)          = if unT == Neg then show unT ++ show expr else show expr ++ show unT
+    show (Binary binT expr1 expr2) = "(" ++ show expr1 ++ show binT ++ show expr2 ++ ")"
+    show (Quant qT var expr)       = "(" ++ show qT ++ var ++ show expr ++ ")"
