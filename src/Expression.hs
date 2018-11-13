@@ -3,20 +3,20 @@ module Expression where
 import Data.List
 
 
-data BinaryType = Impl | And | Or | Add | Mul | Equal
-    deriving Eq
+data BinaryType = Impl | Conj | Disj | Add | Mul | Equal
+    deriving (Eq, Ord)
 
 instance Show BinaryType where
     show Impl  = "->"
-    show And   = "&"
-    show Or    = "|"
+    show Conj  = "&"
+    show Disj  = "|"
     show Add   = "+"
     show Mul   = "*"
     show Equal = "="
 
 
 data UnaryType = Next | Neg
-    deriving Eq
+      deriving (Eq, Ord)
 
 instance Show UnaryType where
     show Next = "\'"
@@ -24,7 +24,7 @@ instance Show UnaryType where
 
 
 data QuantType = Any | Exist
-    deriving Eq
+    deriving (Eq, Ord)
 
 instance Show QuantType where
     show Any   = "@"
@@ -35,7 +35,7 @@ data Expression = Named String [Expression]
                 | Unary UnaryType Expression
                 | Binary BinaryType Expression Expression
                 | Quant QuantType String Expression
-    deriving Eq
+    deriving (Eq, Ord)
 
 instance Show Expression where
     show (Named name [])           = name

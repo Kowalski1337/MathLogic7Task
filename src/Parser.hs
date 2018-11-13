@@ -52,8 +52,8 @@ parserExpr = makeExprParser parserSubExpr exprOperators
           , [ InfixL (Binary Add <$ symbol "+")   ]
           -- logic operators
           , [ InfixL (Binary Equal <$ symbol "=") ]
-          , [ InfixL (Binary And <$ symbol "&")   ]
-          , [ InfixL (Binary Or <$ symbol "|")    ]
+          , [ InfixL (Binary Conj <$ symbol "&")   ]
+          , [ InfixL (Binary Disj <$ symbol "|")    ]
           -- impl operator
           , [ InfixR (Binary Impl <$ symbol "->") ]
         ]
