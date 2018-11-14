@@ -16,7 +16,7 @@ main = do
     -- path <- getLine
     file <- readFile "input.txt"
     case runParser parserFile "" (myReplaceTurn file) of
-        Right exprs    -> putStrLn (check exprs)
+        Right exprs   -> putStrLn (check exprs)
         Left parseErr -> {-writeFile "output.txt"-} putStrLn " parse error"
   where
     myReplaceTurn :: String -> String
