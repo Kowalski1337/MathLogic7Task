@@ -104,7 +104,7 @@ parserQuant = parserExist <|> parserAny
 
 parserFile :: Parser (([Expression], Expression), [Expression])
 parserFile = do
-    headerList <- parserArgs
+    headerList <- parserArgs <|> return []
     symbol "#"
     headerExpr <- parserExpr
     symbol "\n"
