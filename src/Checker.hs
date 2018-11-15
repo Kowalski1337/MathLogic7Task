@@ -19,7 +19,7 @@ checkAll s hyp proofed need =
   let
     next = L.head need
     union = hyp ++ proofed
-    (ax11, extra11) = check11 next
+    (ax11, extra11) = check1112 next
     in if ((checkHyp union next) || checkSimpleAxioms next || (checkMP proofed next) || ax11) then (checkAll s hyp (proofed ++ [next])  (L.drop 1 need) ) else ("Вывод не корректен начиная со формулы №" ++ show (L.length proofed + 1) ++ extra11)
 
 
@@ -96,7 +96,7 @@ checkMP exprs expr = not ([] == L.intersect exprs (L.map myMap (L.filter (myFilt
 -----------------Check 11 Axiom------------------------
 
 what :: Expression
-what = Binary Impl (Quant Any "x" (Quant Exist "b" (Binary Equal (Named "x" []) (Named "0" [])))) ((Quant Exist "b" (Binary Equal (Named "b" []) (Named "0" []))))
+what = Binary Impl (Quant Exist "b" (Binary Equal (Named "b" []) (Named "0" []))) (Quant Exist "x" (Quant Exist "b" (Binary Equal (Named "x" []) (Named "0" []))))
 
 expr1 :: Expression
 expr1 = Quant Exist "b" (Binary Equal (Named "x" []) (Named "b" []))
@@ -104,8 +104,13 @@ expr1 = Quant Exist "b" (Binary Equal (Named "x" []) (Named "b" []))
 expr2 :: Expression
 expr2 = Quant Exist "b" (Binary Equal (Named "b" []) (Named "b" []))
 
-check11 :: Expression -> (Bool, String)
-check11 (Binary Impl (Quant Any var expr1) expr2) = let
+check1112 :: Expression -> (Bool, String)
+check1112 (Binary Impl (Quant Any var expr1) expr2) = let
+  (b, m) = checkEqualsStructure M.empty expr2 expr1
+  in case (M.lookup (Named var []) m) of
+    Just expr -> if (b && (M.size m == 1)) then (((L.intersect (findFreeVars expr) (findEachScope [] var expr1)) == []), (" терм " ++ show expr ++ " не свободен для подстановки для подстановки в формулу " ++ show expr1 ++ " вместо переменной " ++ var)) else (False, "")
+    Nothing -> (False, "")
+check1112 (Binary Impl expr2 (Quant Exist var expr1)) = let
   (b, m) = checkEqualsStructure M.empty expr2 expr1
   in case (M.lookup (Named var []) m) of
     Just expr -> if (b && (M.size m == 1)) then (((L.intersect (findFreeVars expr) (findEachScope [] var expr1)) == []), (" терм " ++ show expr ++ " не свободен для подстановки для подстановки в формулу " ++ show expr1 ++ " вместо переменной " ++ var)) else (False, "")
