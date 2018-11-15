@@ -19,8 +19,8 @@ checkAll s hyp proofed need =
   let
     next = L.head need
     union = hyp ++ proofed
-    (ax11, extra11) = check1112 next
-    in if ((checkHyp union next) || checkSimpleAxioms next || (checkMP proofed next) || ax11) then (checkAll s hyp (proofed ++ [next])  (L.drop 1 need) ) else ("Вывод не корректен начиная со формулы №" ++ show (L.length proofed + 1) ++ extra11)
+    (ax1112, extra11) = check1112 next
+    in if ((checkHyp union next) || checkSimpleAxioms next || (checkMP proofed next) || ax1112 || (checkInduction next)) then (checkAll s hyp (proofed ++ [next])  (L.drop 1 need) ) else ("Вывод не корректен начиная со формулы №" ++ show (L.length proofed + 1) ++ extra11)
 
 
 checkEqualsStructure :: Map Expression Expression -> Expression -> Expression -> (Bool, Map Expression Expression)
@@ -115,4 +115,31 @@ check1112 (Binary Impl expr2 (Quant Exist var expr1)) = let
   in case (M.lookup (Named var []) m) of
     Just expr -> if (b && (M.size m == 1)) then (((L.intersect (findFreeVars expr) (findEachScope [] var expr1)) == []), (" терм " ++ show expr ++ " не свободен для подстановки для подстановки в формулу " ++ show expr1 ++ " вместо переменной " ++ var)) else (False, "")
     Nothing -> (False, "")
-check11 _ = (False, "")
+check1112 _ = (False, "")
+
+
+toCheckInd :: Expression
+toCheckInd = (Binary Impl (Binary Conj (e1) (Quant Any "y" (Binary Impl e2 e3))) (e2))
+
+e1 :: Expression
+e1 = Binary Equal (Binary Add (Named "x"[]) (Unary Next (Named "0"[]))) (Unary Next (Binary Add (Named "x"[])  (Named "0"[])))
+e2 :: Expression
+e2 = Binary Equal (Binary Add (Named "x"[]) (Unary Next (Named "y"[]))) (Unary Next (Binary Add (Named "x"[])  (Named "y"[])))
+e3 :: Expression
+e3 = Binary Equal (Binary Add (Named "x"[]) (Unary Next (Unary Next (Named "y"[])))) (Unary Next (Binary Add (Named "x"[])  (Unary Next (Named "y"[]))))
+checkInduction :: Expression ->Bool
+checkInduction (Binary Impl (Binary Conj (expr1) (Quant Any var (Binary Impl expr2 expr3))) (expr4)) = let
+  (b1, mm1) = checkEqualsStructure M.empty expr1 expr2
+  (b2, mm2) =  checkEqualsStructure M.empty expr3 expr2
+  m1 = M.filterWithKey (\a b -> a/=b) mm1
+  m2 = M.filterWithKey (\a b -> a/=b) mm2
+  b = (b1 && b2 && (M.size m1 == 1) && (M.size m2 == 1) && (expr2==expr4) )
+  bb = case (M.lookup (Named var []) m1) of
+    Just (Named var1 []) -> (var1 == "0")
+    otherwise -> False
+  bbb = case (M.lookup (Named var []) m2) of
+    Just (Unary Next (Named var1 [])) -> var1 == var
+    otherwise -> False
+  in b && bb && bbb
+
+checkInduction _ = False
