@@ -19,8 +19,9 @@ checkAll s hyp proofed need =
   let
     next = L.head need
     union = hyp ++ proofed
-    (ax1112, extra11) = check1112 next
-    in if ((checkHyp union next) || checkSimpleAxioms next || (checkMP proofed next) || ax1112 || (checkInduction next)) then (checkAll s hyp (proofed ++ [next])  (L.drop 1 need) ) else ("Вывод не корректен начиная со формулы №" ++ show (L.length proofed + 1) ++ extra11)
+    (ax, extra1) = check1112 next
+    (rules, extra2) = checkQants union next
+    in if ((checkHyp union next) || checkSimpleAxioms next || (checkMP proofed next) || ax || (checkInduction next)) then (checkAll s hyp (proofed ++ [next])  (L.drop 1 need) ) else ("Вывод не корректен начиная со формулы №" ++ show (L.length proofed + 1) ++ (max extra1 extra2))
 
 
 checkEqualsStructure :: Map Expression Expression -> Expression -> Expression -> (Bool, Map Expression Expression)
@@ -93,7 +94,7 @@ checkMP exprs expr = not ([] == L.intersect exprs (L.map myMap (L.filter (myFilt
     myMap a = a
 
 
------------------Check 11 Axiom------------------------
+-----------------Check 1112 Axiom------------------------
 
 what :: Expression
 what = Binary Impl (Quant Exist "b" (Binary Equal (Named "b" []) (Named "0" []))) (Quant Exist "x" (Quant Exist "b" (Binary Equal (Named "x" []) (Named "0" []))))
@@ -117,7 +118,7 @@ check1112 (Binary Impl expr2 (Quant Exist var expr1)) = let
     Nothing -> (False, "")
 check1112 _ = (False, "")
 
-
+-----------------Check Induction------------------------
 toCheckInd :: Expression
 toCheckInd = (Binary Impl (Binary Conj (e1) (Quant Any "y" (Binary Impl e2 e3))) (e2))
 
@@ -141,5 +142,10 @@ checkInduction (Binary Impl (Binary Conj (expr1) (Quant Any var (Binary Impl exp
     Just (Unary Next (Named var1 [])) -> var1 == var
     otherwise -> False
   in b && bb && bbb
-
 checkInduction _ = False
+
+-----------------Check Quants------------------------
+
+checkQants :: [Expression] ->Expression -> (Bool, String)
+checkQants list (Binary Impl expr1 (Quant Any var expr2)) = if  (L.elem (Binary Impl expr1 expr2) list) then (L.notElem var (findFreeVars expr1), " переменная " ++ var ++ " входит свободно в формулу " ++ show expr1) else (False, "")
+checkQants list (Binary Impl (Quant Exist var expr2) expr1) = if  (L.elem (Binary Impl expr2 expr1) list) then (L.notElem var (findFreeVars expr1), " переменная " ++ var ++ " входит свободно в формулу " ++ show expr1) else (False, "")
