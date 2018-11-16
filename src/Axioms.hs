@@ -15,7 +15,7 @@ simpleAxioms = [Binary Impl (Named "A" []) (Binary Impl (Named "B" []) (Named "A
                 Binary Impl (Binary Impl (Named "A" []) (Named "C" [])) (Binary Impl (Binary Impl (Named "B" []) (Named "C" [])) (Binary Impl (Binary Disj (Named "A" [])(Named "B" [])) (Named "C" []))),
                 Binary Impl (Binary Impl (Named "A" []) (Named "B" [])) (Binary Impl (Binary Impl (Named "A" []) (Unary Neg (Named "B" []))) (Unary Neg (Named "A" []))),
                 Binary Impl (Unary Neg (Unary Neg (Named "A" []))) (Named "A" []),
-                Binary Impl (Binary Equal (Named "a" []) (Named "b" [])) (Binary Impl (Binary Equal (Named "b" []) (Named "c" [])) (Binary Equal (Named "A" []) (Named "c" []))),
+                Binary Impl (Binary Equal (Named "a" []) (Named "b" [])) (Binary Impl (Binary Equal (Named "a" []) (Named "c" [])) (Binary Equal (Named "b" []) (Named "c" []))),
                 Binary Impl (Binary Equal (Named "a" []) (Named "b" [])) (Binary Equal (Unary Next (Named "a" []))(Unary Next (Named "b" []))),
                 Binary Impl (Binary Equal (Unary Next (Named "a" []))(Unary Next (Named "b" []))) (Binary Equal (Named "a" []) (Named "b" [])),
                 Unary Neg (Binary Equal (Unary Next (Named "a" [])) zero),
