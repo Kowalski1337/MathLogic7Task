@@ -11,7 +11,7 @@ simpleAxioms = [Binary Impl (Named "A" []) (Binary Impl (Named "B" []) (Named "A
                 Binary Impl (Binary Conj (Named "A" []) (Named "B" [])) (Named "A" []),
                 Binary Impl (Binary Conj (Named "A" []) (Named "B" [])) (Named "B" []),
                 Binary Impl (Named "A" []) (Binary Disj (Named "A" []) (Named "B" [])),
-                Binary Impl (Named "A" []) (Binary Disj (Named "A" []) (Named "B" [])),
+                Binary Impl (Named "A" []) (Binary Disj (Named "B" []) (Named "A" [])),
                 Binary Impl (Binary Impl (Named "A" []) (Named "C" [])) (Binary Impl (Binary Impl (Named "B" []) (Named "C" [])) (Binary Impl (Binary Disj (Named "A" [])(Named "B" [])) (Named "C" []))),
                 Binary Impl (Binary Impl (Named "A" []) (Named "B" [])) (Binary Impl (Binary Impl (Named "A" []) (Unary Neg (Named "B" []))) (Unary Neg (Named "A" []))),
                 Binary Impl (Unary Neg (Unary Neg (Named "A" []))) (Named "A" []),
