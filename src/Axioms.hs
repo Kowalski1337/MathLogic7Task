@@ -3,7 +3,6 @@ module Axioms where
 import Expression
 zero = Named "0" []
 
---check =Binary Impl (Binary Impl (Named "A" []) (Binary Impl (Named "B" []) (Named "A" []))) (Binary Impl (Named "B" []) (Binary Impl (Named "A" []) (Binary Impl (Named "B" []) (Named "A" []))))
 simpleAxioms :: [Expression]
 simpleAxioms = [Binary Impl (Named "A" []) (Binary Impl (Named "B" []) (Named "A" [])),
                 Binary Impl (Binary Impl (Named "A" []) (Named "B" [])) (Binary Impl (Binary Impl (Named "A" []) (Binary Impl (Named "B" []) (Named "C" [])))(Binary Impl (Named "A" []) (Named "C" []))),

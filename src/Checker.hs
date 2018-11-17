@@ -103,7 +103,7 @@ checkMP exprs expr = not ([] == L.intersect exprs (L.map myMap (L.filter (myFilt
   where
     myFilter :: Expression -> Expression -> Bool
     myFilter arg (Binary Impl f s) = arg == s
-    myFilter _ _ = False
+    myFilter _ _                   = False
 
     myMap :: Expression -> Expression
     myMap (Binary Impl f s) = f
@@ -116,7 +116,7 @@ check11 :: Expression -> (Bool, String)
 check11 (Binary Impl (Quant Any var expr1) expr2) =
   let
     (b, mm) = eqStr M.empty expr2 expr1
-    m = M.filterWithKey (\a b -> a/=b) mm
+    m       = M.filterWithKey (\a b -> a/=b) mm
   in case (M.lookup (Named var []) m) of
     Just expr ->
       if (b && (M.size m == 1))
@@ -129,7 +129,7 @@ check12 :: Expression -> (Bool, String)
 check12 (Binary Impl expr2 (Quant Exist var expr1)) =
   let
     (b, mm) = eqStr M.empty expr2 expr1
-    m = M.filterWithKey (\a b -> a/=b) mm
+    m       = M.filterWithKey (\a b -> a/=b) mm
   in case (M.lookup (Named var []) m) of
     Just expr ->
       if (b && (M.size m == 1))
@@ -145,15 +145,15 @@ checkInduction (Binary Impl (Binary Conj (expr1) (Quant Any var (Binary Impl exp
   let
     (b1, mm1) = eqStr M.empty expr1 expr2
     (b2, mm2) =  eqStr M.empty expr3 expr2
-    m1 = M.filterWithKey (\a b -> a/=b) mm1
-    m2 = M.filterWithKey (\a b -> a/=b) mm2
-    b = (b1 && b2 && (M.size m1 == 1) && (M.size m2 == 1) && (expr2==expr4) )
-    bb = case (M.lookup (Named var []) m1) of
-          Just (Named var1 []) -> (var1 == "0")
-          Nothing -> False
-    bbb = case (M.lookup (Named var []) m2) of
-            Just (Unary Next (Named var1 [])) -> var1 == var
-            Nothing -> False
+    m1        = M.filterWithKey (\a b -> a/=b) mm1
+    m2        = M.filterWithKey (\a b -> a/=b) mm2
+    b         = (b1 && b2 && (M.size m1 == 1) && (M.size m2 == 1) && (expr2==expr4) )
+    bb        = case (M.lookup (Named var []) m1) of
+                  Just (Named var1 []) -> (var1 == "0")
+                  Nothing              -> False
+    bbb       = case (M.lookup (Named var []) m2) of
+                  Just (Unary Next (Named var1 [])) -> var1 == var
+                  Nothing                           -> False
   in b && bb && bbb
 checkInduction _ = False
 
