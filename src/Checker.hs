@@ -9,6 +9,7 @@ import           Data.List
 import qualified Data.List as L
 import           Data.Map
 import qualified Data.Map as M
+import           Debug.Trace
 
 check :: (([Expression], Expression), [Expression]) -> String
 check ((hyp, smth), proof) = checkAll "" hyp [] proof
@@ -96,29 +97,34 @@ checkMP exprs expr = not ([] == L.intersect exprs (L.map myMap (L.filter (myFilt
 
 -----------------Check 1112 Axiom------------------------
 
-what :: Expression
-what = Binary Impl (Quant Any "a" expr1) expr2
+check1 :: Expression
+check1 = Binary Impl expr2 (Quant Exist var expr1)
+
+check2 :: Expression
+check2 = Binary Impl (Quant Any var expr1) expr2
+
+var:: String
+var = "x"
 
 expr1 :: Expression
-expr1 = Quant Any "b" (Quant Any "c" (Binary Impl (Binary Equal (Named "a" []) (Named "b" []))(Binary Impl (Binary Equal (Named "a" []) (Named "c" [])) (Binary Equal (Named "b" []) (Named "c" [])))))
+expr1 = Quant Any "y" (Named "P" [Named "x"[]])
 
 expr2 :: Expression
-expr2 = Quant Any "b" (Quant Any "c" (Binary Impl (Binary Equal (Binary Add (Named "a" []) (Named "0" [])) (Named "b" []))(Binary Impl (Binary Equal (Binary Add (Named "a" []) (Named "0" [])) (Named "c" [])) (Binary Equal
-  (Named "b" []) (Named "c" [])))))
+expr2 = Quant Any "y" (Named "P" [Named "f"[Named "y" []]])
 
 check1112 :: Expression -> (Bool, String)
 check1112 (Binary Impl (Quant Any var expr1) expr2) = let
   (b, mm) = checkEqualsStructure M.empty expr2 expr1
   m = M.filterWithKey (\a b -> a/=b) mm
   in case (M.lookup (Named var []) m) of
-    Just expr -> if (b && (M.size m <= 1)) then (((L.intersect (findFreeVars expr) (L.delete var (findEachScope [] var expr1))) == []), (" терм " ++ show expr ++ " не свободен для подстановки в формулу " ++ show expr1 ++ " вместо переменной " ++ var)) else (False, " 1")
+    Just expr -> if (b && (M.size m == 1)) then (((L.intersect (findFreeVars expr) (L.delete var (findEachScope [] var expr1))) == []), (" терм " ++ show expr ++ " не свободен для подстановки в формулу " ++ show expr1 ++ " вместо переменной " ++ var)) else (False, " 1")
     Nothing -> ((M.size m == 0), " 2")
 check1112 (Binary Impl expr2 (Quant Exist var expr1)) = let
   (b, mm) = checkEqualsStructure M.empty expr2 expr1
   m = M.filterWithKey (\a b -> a/=b) mm
   in case (M.lookup (Named var []) m) of
-    Just expr -> if (b && (M.size m <= 1)) then (((L.intersect (findFreeVars expr) (L.delete var (findEachScope [] var expr1))) == []), (" терм " ++ show expr ++ " не свободен для подстановки в формулу " ++ show expr1 ++ " вместо переменной " ++ var)) else (False, " 1")
-    Nothing -> (M.size m == 0, " 2")
+    Just expr -> if (b && (M.size m == 1)) then (((L.intersect (findFreeVars expr) (L.delete var (findEachScope [] var expr1))) == []), (" терм " ++ show expr ++ " не свободен для подстановки в формулу " ++ show expr1 ++ " вместо переменной " ++ var)) else (False, " 1")
+    Nothing -> ((M.size m == 0), " 2")
 check1112 _ = (False, " 3")
 
 -----------------Check Induction------------------------

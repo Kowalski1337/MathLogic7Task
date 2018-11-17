@@ -16,7 +16,7 @@ p = "@a@b@c(a=b->a=c->b=c)->@b@c(a+0=b->a+0=c->b=c)"
 main :: IO ()
 main = do
     -- path <- getLine
-    file <- readFile "correct15.in"
+    file <- readFile "incorrect3.in"
     case runParser parserFile "" (myReplaceTurn file) of
         Right exprs   -> putStrLn (check exprs)
         Left parseErr -> {-writeFile "output.txt"-} putStrLn " parse error"
